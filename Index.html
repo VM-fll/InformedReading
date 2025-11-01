@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 25px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Navigation */
+    nav {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .nav-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 5px;
+      padding: 0 20px;
+      overflow-x: auto;
+    }
+
+    .nav-btn {
+      padding: 15px 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover {
+      color: #1e3c72;
+      background: #f8f9fa;
+    }
+
+    .nav-btn.active {
+      color: #1e3c72;
+      border-bottom-color: #1e3c72;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .info-section {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 4px solid #1e3c72;
+    }
+
+    .info-section h2 {
+      font-size: 22px;
+      color: #1e3c72;
+      margin-bottom: 12px;
+    }
+
+    .info-section p {
+      line-height: 1.7;
+      color: #555;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .info-section ul {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    .info-section li {
+      line-height: 1.7;
+      color: #555;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .info-section strong {
+      color: #1e3c72;
+    }
+
+    .bias-example {
+      display: inline-block;
+      width: 80px;
+      height: 12px;
+      border-radius: 6px;
+      vertical-align: middle;
+      margin: 0 5px;
+    }
+
+    .category-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1e3c72;
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .article-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .article-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .bias-indicator {
+      height: 6px;
+      width: 100%;
+    }
+
+    .article-content {
+      padding: 20px;
+    }
+
+    .article-title {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      color: #222;
+    }
+
+    .article-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .meta-badge {
+      padding: 4px 10px;
+      background: #f0f0f0;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .article-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #1e3c72;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2a5298;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #555;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s;
+      margin: auto;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      padding: 25px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #222;
+      flex: 1;
+      margin-right: 20px;
+    }
+
+    .close-btn {
+      background: #f0f0f0;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      color: #555;
+      flex-shrink: 0;
+    }
+
+    .close-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .modal-body {
+      padding: 25px;
+      max-height: calc(80vh - 100px);
+      overflow-y: auto;
+    }
+
+    .article-text {
+      line-height: 1.8;
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+      user-select: text;
+    }
+
+    .article-text a {
+      color: #1e3c72;
+      text-decoration: underline;
+    }
+
+    .article-text a:hover {
+      color: #2a5298;
+    }
+
+    .article-text::selection {
+      background: #ffd54f;
+    }
+
+    .ai-section {
+      border-top: 1px solid #e0e0e0;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+
+    .ai-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .question-input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 250px;
+    }
+
+    .question-input:focus {
+      outline: none;
+      border-color: #1e3c72;
+    }
+
+    .ai-response {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #1e3c72;
+      line-height: 1.7;
+      display: none;
+    }
+
+    .ai-response p {
+      margin-bottom: 12px;
+    }
+
+    .ai-response h1, .ai-response h2, .ai-response h3 {
+      color: #1e3c72;
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+
+    .ai-response h1 { font-size: 20px; }
+    .ai-response h2 { font-size: 18px; }
+    .ai-response h3 { font-size: 16px; }
+
+    .ai-response ul {
+      margin-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .ai-response li {
+      margin-bottom: 6px;
+    }
+
+    .ai-response strong {
+      font-weight: 600;
+      color: #222;
+    }
+
+    .ai-response em {
+      font-style: italic;
+    }
+
+    .ai-response.active {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .loading {
+      color: #777;
+      font-style: italic;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #777;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    /* Footer */
+    footer {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 40px 20px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-section {
+      margin-bottom: 25px;
+    }
+
+    .footer-section h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .footer-section p {
+      line-height: 1.7;
+      color: #bdc3c7;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .footer-section a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .footer-section a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-divider {
+      border-top: 1px solid #34495e;
+      margin: 25px 0;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      color: #95a5a6;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .articles-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      h1 {
+        font-size: 28px;
+      }
+
+      .nav-content {
+        padding: 0 10px;
+      }
+
+      .modal-content {
+        margin: 0;
+      }
+
+      .modal.active {
+        padding: 20px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>Informed Reading</h1>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-content" id="nav"></div>
+  </nav>
+
+  <div class="container">
+    <div class="info-section">
+      <h2>Why Identifying Bias Matters</h2>
+      <p>
+        In today's media landscape, understanding bias in news coverage is essential for informed decision-making. 
+        Every news source has its own perspective shaped by various factors including political leanings, funding sources, 
+        and editorial choices. By recognizing these biases, you can better evaluate the information you consume, 
+        cross-reference multiple sources, and develop a more complete understanding of current events. 
+        Informed Reading helps you identify potential bias in articles, empowering you to read critically 
+        and form well-rounded opinions based on diverse perspectives.
+      </p>
+    </div>
+    <div id="content">Loading articles...</div>
+  </div>
+
+  <!-- Article Modal -->
+  <div class="modal" id="articleModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle"></div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="article-text" id="articleText"></div>
+        <div class="ai-section">
+          <div class="ai-controls">
+            <input 
+              type="text" 
+              class="question-input" 
+              id="questionInput" 
+              placeholder="Ask a question about this article..."
+            >
+            <button class="btn btn-primary" onclick="askQuestion()">Ask Question</button>
+            <button class="btn btn-secondary" onclick="analyzeBias()">Analyze Bias</button>
+            <button class="btn btn-secondary" onclick="analyzeSelection()">Analyze Selection</button>
+          </div>
+          <div class="ai-response" id="aiResponse"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Data Sources</h3>
+        <p>News articles are sourced from <a href="https://worldnewsapi.com" target="_blank">WorldNewsAPI.com</a></p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Bias Classification Model</h3>
+        <p>Political bias scoring powered by the research model from:</p>
+        <p><strong>Political Leaning and Politicalness Classification of Texts</strong></p>
+        <p>Matous Volf and Jakub Simko (2025)</p>
+        <p><a href="https://arxiv.org/abs/2507.13913" target="_blank">arXiv:2507.13913</a></p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <p>Website created by Vansh Mookim</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let allArticles = [];
+    let currentCategory = 'all';
+    let currentArticleData = null;
+
+    function init() {
+      google.script.run
+        .withSuccessHandler(function(articles) {
+          allArticles = articles;
+          setupNavigation();
+          displayCategory('all');
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('content').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Error loading articles</h3><p>' + error.message + '</p></div>';
+        })
+        .getArticles();
+    }
+
+    function formatCategoryName(cat) {
+      if (cat === 'trending') return 'Trending News';
+      if (cat === 'all') return 'All News';
+      if (cat === 'how_to_use') return 'How to Use';
+      
+      return cat.split('_')
+        .map(function(word) {
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
+        .join(' ');
+    }
+
+    function isMajorProvider(category) {
+      const majorProviders = ['cnn', 'bbc', 'fox_news', 'fox news', 'reuters', 'associated_press', 
+                              'associated press', 'new_york_times', 'new york times', 'nytimes',
+                              'washington_post', 'washington post', 'the_guardian', 'the guardian', 
+                              'wall_street_journal', 'wall street journal', 'wsj', 'npr', 'bloomberg',
+                              'cnbc', 'cbs_news', 'cbs news', 'nbc_news', 'nbc news', 'abc_news', 
+                              'abc news', 'usa_today', 'usa today', 'the_hill', 'the hill',
+                              'major_providers', 'major providers', 'major_news_outlets', 'major news outlets'];
+      const catLower = category.toLowerCase().replace(/\s+/g, '_');
+      return majorProviders.some(function(provider) {
+        return catLower === provider.replace(/\s+/g, '_') || catLower.includes(provider.replace(/\s+/g, '_'));
+      });
+    }
+
+    function setupNavigation() {
+      const allCategories = Array.from(new Set(allArticles.map(function(a) { return a.category; })));
+      
+      const majorProviders = allCategories.filter(function(cat) { return isMajorProvider(cat); }).sort();
+      const otherCategories = allCategories.filter(function(cat) { 
+        return !isMajorProvider(cat) && cat.toLowerCase() !== 'top_news' && cat.toLowerCase() !== 'top news';
+      }).sort();
+      
+      const categories = ['all', 'trending'].concat(majorProviders).concat(otherCategories).concat(['how_to_use']);
+      
+      const nav = document.getElementById('nav');
+      
+      nav.innerHTML = categories.map(function(cat) {
+        const isActive = cat === 'all';
+        return '<button class="nav-btn ' + (isActive ? 'active' : '') + '" onclick="displayCategory(\'' + cat + '\')" data-category="' + cat + '">' + formatCategoryName(cat) + '</button>';
+      }).join('');
+    }
+
+    function displayCategory(category) {
+      currentCategory = category;
+      
+      document.querySelectorAll('.nav-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.category === category);
+      });
+
+      const content = document.getElementById('content');
+
+      // Special handling for How to Use tab
+      if (category === 'how_to_use') {
+        content.innerHTML = '<div class="info-section"><h2>How to Use This Website</h2><p><strong>Understanding Bias Scores:</strong></p><p>Each article displays a colored bias indicator bar at the top and a numerical bias score:</p><ul><li><strong>Blue</strong> <span class="bias-example" style="background: rgb(0,0,255);"></span> = Left-leaning bias (score closer to -1)</li><li><strong>Purple</strong> <span class="bias-example" style="background: rgb(128,0,128);"></span> = Neutral/Centrist (score around 0)</li><li><strong>Red</strong> <span class="bias-example" style="background: rgb(255,0,0);"></span> = Right-leaning bias (score closer to +1)</li></ul><p>The bias score ranges from -1.0 (most left-leaning) to +1.0 (most right-leaning), with 0 being neutral.</p><p style="margin-top: 20px;"><strong>Article Length:</strong></p><ul><li><strong>Short Read:</strong> Quick articles that can be read in a few minutes</li><li><strong>Medium Read:</strong> Standard news articles with moderate detail</li><li><strong>Long Read:</strong> In-depth articles with comprehensive coverage</li></ul><p style="margin-top: 20px;"><strong>AI Analysis Features:</strong></p><p>When reading an article, you can use Gemini AI to:</p><ul><li><strong>Ask Questions:</strong> Type any question about the article in the input box and click "Ask Question" to get AI-powered answers</li><li><strong>Analyze Bias:</strong> Click "Analyze Bias" to get a detailed breakdown of potential biases and subjective framing in the entire article</li><li><strong>Analyze Selection:</strong> Highlight any portion of the article text with your cursor, then click "Analyze Selection" to examine that specific passage for bias</li></ul><p style="margin-top: 20px;"><strong>Navigation:</strong></p><ul><li><strong>All News:</strong> Browse every article from all sources and categories</li><li><strong>Trending News:</strong> View the most recent and popular articles</li><li><strong>Categories:</strong> Filter articles by topic (Politics, Technology, Sports, etc.) or by news provider</li></ul></div>';
+        return;
+      }
+
+      let filtered;
+      if (category === 'trending') {
+        filtered = allArticles.filter(function(a) { 
+          return a.category.toLowerCase() === 'top_news' || a.category.toLowerCase() === 'top news';
+        });
+        if (filtered.length === 0) {
+          filtered = allArticles.slice(0, 15);
+        }
+      } else if (category === 'all') {
+        filtered = allArticles.slice();
+      } else {
+        filtered = allArticles.filter(function(a) { return a.category === category; });
+      }
+
+      // Sort by date (newest first)
+      filtered.sort(function(a, b) {
+        return new Date(b.date) - new Date(a.date);
+      });
+      
+      if (filtered.length === 0) {
+        content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><h3>No articles found</h3><p>There are no articles in this category yet.</p></div>';
+        return;
+      }
+
+      const title = formatCategoryName(category);
+      
+      content.innerHTML = '<h2 class="category-title">' + title + '</h2><div class="articles-grid">' + 
+        filtered.map(function(article) { return renderArticleCard(article); }).join('') + 
+        '</div>';
+    }
+
+    function renderArticleCard(article) {
+      const biasColor = getBiasColor(article.bias);
+      const domId = sanitizeId(article.title);
+      
+      return '<div class="article-card" onclick="openArticle(\'' + domId + '\')"><div class="bias-indicator" style="background-color: ' + biasColor + '"></div><div class="article-content"><div class="article-title">' + article.title + '</div><div class="article-meta"><span class="meta-badge">' + formatCategoryName(article.category) + '</span><span class="meta-badge">' + article.length + ' read</span><span class="meta-badge">Bias: ' + article.bias.toFixed(2) + '</span></div><div class="article-actions"><button class="btn btn-primary" onclick="event.stopPropagation(); openArticle(\'' + domId + '\')">Read Article</button></div></div></div>';
+    }
+
+    function getBiasColor(bias) {
+      if (bias < 0) {
+        const intensity = Math.abs(bias);
+        const r = Math.round(128 * (1 - intensity));
+        const g = Math.round(128 * (1 - intensity));
+        const b = Math.round(128 + 127 * intensity);
+        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+      } else if (bias > 0) {
+        const intensity = bias;
+        const r = Math.round(128 + 127 * intensity);
+        const g = Math.round(128 * (1 - intensity));
+        const b = Math.round(128 * (1 - intensity));
+        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+      } else {
+        return '#8B008B';
+      }
+    }
+
+    function sanitizeId(str) {
+      return str.replace(/[^a-z0-9]/gi, "_");
+    }
+
+    function makeLinksClickable(text) {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" target="_blank">' + url + '</a>';
+      });
+    }
+
+    function openArticle(domId) {
+      const article = allArticles.find(function(a) { return sanitizeId(a.title) === domId; });
+      if (!article) return;
+
+      currentArticleData = article;
+      
+      document.getElementById('modalTitle').textContent = article.title;
+      document.getElementById('articleText').innerHTML = 'Loading article...';
+      document.getElementById('aiResponse').classList.remove('active');
+      document.getElementById('questionInput').value = '';
+      document.getElementById('articleModal').classList.add('active');
+
+      google.script.run
+        .withSuccessHandler(function(text) {
+          document.getElementById('articleText').innerHTML = makeLinksClickable(text);
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('articleText').textContent = 'Error loading article: ' + error.message;
+        })
+        .getFullText(article.category, article.date, article.filename);
+    }
+
+    function closeModal() {
+      document.getElementById('articleModal').classList.remove('active');
+      currentArticleData = null;
+    }
+
+    function askQuestion() {
+      const question = document.getElementById('questionInput').value.trim();
+      if (!question) {
+        alert('Please enter a question first.');
+        return;
+      }
+
+      const textElement = document.getElementById('articleText');
+      const text = textElement.textContent || textElement.innerText;
+      if (text === 'Loading article...' || text.indexOf('Error loading') === 0) return;
+
+      showAiResponse('Analyzing your question...');
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          showAiResponse(response);
+        })
+        .withFailureHandler(function(err) {
+          showAiResponse('Error: ' + err.message);
+        })
+        .analyzeWithGemini(text, question);
+    }
+
+    function analyzeBias() {
+      const textElement = document.getElementById('articleText');
+      const text = textElement.textContent || textElement.innerText;
+      if (text === 'Loading article...' || text.indexOf('Error loading') === 0) return;
+
+      showAiResponse('Analyzing article bias...');
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          showAiResponse(response);
+        })
+        .withFailureHandler(function(err) {
+          showAiResponse('Error: ' + err.message);
+        })
+        .analyzeWithGemini(text, null);
+    }
+
+    function analyzeSelection() {
+      const selectedText = window.getSelection().toString().trim();
+      
+      if (!selectedText) {
+        alert('Please highlight some text in the article first.');
+        return;
+      }
+
+      showAiResponse('Analyzing selected text...');
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          showAiResponse(response);
+        })
+        .withFailureHandler(function(err) {
+          showAiResponse('Error: ' + err.message);
+        })
+        .analyzeWithGemini(selectedText, null);
+    }
+
+    function showAiResponse(text) {
+      const responseEl = document.getElementById('aiResponse');
+      responseEl.innerHTML = formatMarkdown(text);
+      responseEl.classList.add('active');
+    }
+
+    function formatMarkdown(text) {
+      // Convert markdown to HTML
+      let html = text;
+      
+      // Headers
+      html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+      html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+      html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+      
+      // Bold
+      html = html.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\_\_([^\_]+)\_\_/g, '<strong>$1</strong>');
+      
+      // Italic
+      html = html.replace(/\*([^\*]+)\*/g, '<em>$1</em>');
+      html = html.replace(/\_([^\_]+)\_/g, '<em>$1</em>');
+      
+      // Line breaks
+      html = html.replace(/\n\n/g, '</p><p>');
+      html = html.replace(/\n/g, '<br>');
+      
+      // Wrap in paragraph
+      html = '<p>' + html + '</p>';
+      
+      // Bullet lists
+      html = html.replace(/<p>\s*[\-\*]\s+(.+?)<\/p>/g, '<li>$1</li>');
+      html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+      
+      return html;
+    }
+
+    document.getElementById('articleModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.getElementById('questionInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') askQuestion();
+    });
+
+    window.onload = init;
+  </script>
+</body>
+</html>
